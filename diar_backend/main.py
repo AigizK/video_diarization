@@ -44,8 +44,9 @@ async def get_task():
         raise HTTPException(status_code=404, detail="Нет доступных задач")
 
     task_filename = available_tasks.pop()
-    with open(os.path.join("video", task_filename), 'r') as file:
-        task_data = json.load(file)
+    with open(os.path.join("video", task_filename), 'rb') as file:
+        content = file.read()
+        task_data = json.loads(content.decode('utf-8-sig'))
 
     return JSONResponse(content=task_data)
 
