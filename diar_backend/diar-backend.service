@@ -1,0 +1,14 @@
+[Unit]
+Description=Video diarization service
+After=network.target
+
+[Service]
+WorkingDirectory=/root/proj/video_diarization/video_diarization/diar_backend
+Environment="PATH=/root/proj/video_diarization/video_diarization/diar_backend/venv/bin"
+ExecStart=/root/proj/video_diarization/video_diarization/diar_backend/venv/bin/python /root/proj/video_diarization/video_diarization/diar_backend/main.py
+
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
