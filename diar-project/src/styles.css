@@ -1,0 +1,202 @@
+/* Общие стили */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e9ecef;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  max-width: 100%;
+  margin: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Стили для видеоплеера */
+.video-player {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Стили для блока транскрипции */
+.transcription {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.transcription .sentence span {
+  padding: 5px;
+  margin: 2px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.transcription .sentence span:hover {
+  background-color: #d1e7dd;
+}
+
+.current-word {
+  text-decoration: underline;
+}
+
+
+/* Стили для информации о горячих клавишах */
+.hotkeys-info {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Стили кнопок */
+button {
+  background-color: #008CBA;
+  color: white;
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #005f73;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+  #app {
+    padding: 10px;
+  }
+  
+  .video-player,
+  .transcription,
+  .speaker-list,
+  .hotkeys-info {
+    padding: 15px;
+  }
+  
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .speaker-list table,
+  .speaker-list thead,
+  .speaker-list tbody,
+  .speaker-list th,
+  .speaker-list td,
+  .speaker-list tr {
+    display: block;
+  }
+  
+  .speaker-list thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .speaker-list td {
+    position: relative;
+    padding-left: 50%;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .speaker-list td:before {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    content: attr(data-label);
+    font-weight: bold;
+  }
+}
+
+/* Существующие стили остаются без изменений */
+
+/* Обновленные стили для списка спикеров */
+.speaker-list {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.speaker-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.speaker-list th,
+.speaker-list td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.speaker-list th {
+  background-color: #f2f2f2;
+}
+
+.speaker-list input[type="text"] {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+/* Медиа-запросы для адаптивности */
+@media screen and (max-width: 600px) {
+  .speaker-list table,
+  .speaker-list thead,
+  .speaker-list tbody,
+  .speaker-list th,
+  .speaker-list td,
+  .speaker-list tr {
+    display: block;
+  }
+  
+  .speaker-list thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .speaker-list tr {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .speaker-list td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+  }
+  
+  .speaker-list td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+  }
+}
+
+/* Остальные стили остаются без изменений */
