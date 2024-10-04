@@ -96,7 +96,7 @@ async def post_result(data: dict = Body(...)):
 
 @app.get("/video/{filename}")
 async def get_video(filename: str):
-    video_path = f"static/video/{filename}"
+    video_path = f"video/{filename}"
     if os.path.isfile(video_path):
         return FileResponse(video_path)
     raise HTTPException(status_code=404, detail="Видео не найдено")
