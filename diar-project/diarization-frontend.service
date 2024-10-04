@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/root/proj/video_diarization/video_diarization/diar-project
-ExecStart=/usr/bin/npm run dev
+ExecStart=/bin/bash /root/proj/video_diarization/video_diarization/diar-project/start.sh
 Restart=on-failure
 Environment=NODE_ENV=production
 

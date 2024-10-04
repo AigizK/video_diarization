@@ -40,6 +40,7 @@ export default {
   data() {
     return {
       videoSrc: '',
+      file_id:'file_id',
       speakers: [
         { id: 'Speaker_1', name: 'Спикер 1', color: '#FF5733' },
         { id: 'Speaker_2', name: 'Спикер 2', color: '#33C1FF' }
@@ -56,6 +57,7 @@ export default {
       .then(data => {
         this.transcript = data["text"];
         this.videoSrc = data["video"];
+        this.file_id = data["file_id"]
       });
 
     // Обработка горячих клавиш
@@ -148,7 +150,7 @@ export default {
       fetch('/result', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({"file": this.videoSrc, "data":result})
+        body: JSON.stringify({"file_id": this.file_id, "data":result})
       });
     }
   },

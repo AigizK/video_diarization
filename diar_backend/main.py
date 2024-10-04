@@ -14,92 +14,57 @@ os.makedirs("static/video", exist_ok=True)
 # Монтируем статическую папку
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Глобальные переменные для хранения данных в памяти
+task_list = set()
+results_files = set()
+
+
+def load_video_data():
+    global task_list
+    video_dir = "video"
+    task_list = set(os.listdir(video_dir))
+
+
+def load_results_files():
+    global results_files
+    results_dir = "results"
+    results_files = set(os.listdir(results_dir))
+
+
+@app.on_event("startup")
+async def startup_event():
+    load_video_data()
+    load_results_files()
+
 
 @app.get("/task")
 async def get_task():
-    test_data = {"video": "/video/video.mov", "text": [
-        {
-            "sentence_id": "1",
-            "words":
-                [
-                    {
-                        "word": "Привет",
-                        "start": 0.5,
-                        "end": 1.0
-                    },
-                    {
-                        "word": "мир",
-                        "start": 1.0,
-                        "end": 1.5
-                    },
-                    {
-                        "word": "как",
-                        "start": 2.0,
-                        "end": 2.5
-                    },
-                    {
-                        "word": "твои",
-                        "start": 4.0,
-                        "end": 5.5
-                    },
-                    {
-                        "word": "дела",
-                        "start": 7.0,
-                        "end": 7.5
-                    },
-                    {
-                        "word": "то",
-                        "start": 8.0,
-                        "end": 8.5
-                    }
-                ]
-        },
-        {
-            "sentence_id": "2",
-            "words":
-                [
-                    {
-                        "word": "Это",
-                        "start": 12.0,
-                        "end": 12.5
-                    },
-                    {
-                        "word": "тест",
-                        "start": 12.5,
-                        "end": 13.0
-                    },
-                    {
-                        "word": "для",
-                        "start": 14.5,
-                        "end": 16.0
-                    },
-                    {
-                        "word": "нас",
-                        "start": 17.5,
-                        "end": 23.0
-                    }
-                ]
-        }
-    ]
-                 }
-    return JSONResponse(content=test_data)
+    available_tasks = task_list - results_files
+    if not available_tasks:
+        raise HTTPException(status_code=404, detail="Нет доступных задач")
+
+    task_filename = available_tasks.pop()
+    with open(os.path.join("video", task_filename), 'r') as file:
+        task_data = json.load(file)
+
+    return JSONResponse(content=task_data)
 
 
 @app.post("/result")
 async def post_result(data: dict = Body(...)):
-    filename = f"results/{uuid.uuid4()}.json"
+    file_id = data.get('file_id')
+    if not file_id:
+        raise HTTPException(status_code=400,
+                            detail="file_id отсутствует в данных")
+
+    filename = f"results/{file_id}"
     with open(filename, "w") as file:
         json.dump(data, file)
+
+    results_files.add(file_id)
+
     return JSONResponse(
         content={"message": "Данные успешно сохранены", "filename": filename})
-
-
-@app.get("/video/{filename}")
-async def get_video(filename: str):
-    video_path = f"video/{filename}"
-    if os.path.isfile(video_path):
-        return FileResponse(video_path)
-    raise HTTPException(status_code=404, detail="Видео не найдено")
 
 
 if __name__ == "__main__":
