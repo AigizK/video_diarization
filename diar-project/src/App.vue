@@ -51,7 +51,7 @@ export default {
   },
   mounted() {
     // Загрузить расшифровку из JSON-файла
-    fetch('/transcript.json')
+    fetch('/task')
       .then(response => response.json())
       .then(data => {
         this.transcript = data["text"];
@@ -145,10 +145,10 @@ export default {
         }
       }
       // Отправка на сервер
-      fetch('path/to/server', {
+      fetch('/result', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(result)
+        body: JSON.stringify({"file": this.videoSrc, "data":result})
       });
     }
   },
