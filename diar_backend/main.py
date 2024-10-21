@@ -22,7 +22,8 @@ results_files = set()
 def load_video_data():
     global task_list
     video_dir = "video"
-    task_list = set(os.listdir(video_dir))
+    task_list = {file for file in os.listdir(video_dir) if
+                 file.endswith('.json')}
 
 
 def load_results_files():
