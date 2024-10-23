@@ -148,6 +148,7 @@ export default {
       this.file_id = data["file_id"];
       this.speakers = data["speakers"];
       this.channel = data["channel_id"];
+      this.$refs.videoPlayer.reset();
     },
     async exportResults() {
       const result = [];

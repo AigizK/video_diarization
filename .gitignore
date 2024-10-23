@@ -1,6 +1,8 @@
 .aider*
 .env
 .envrc
+diar_backend/results/
+diar_backend/speakers/
 **/.DS_Store
 **/.idea/**
 **/video/**

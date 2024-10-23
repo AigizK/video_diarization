@@ -64,6 +64,15 @@ export default {
     },
     onTimeUpdate() {
       this.$emit('timeupdate', this.$refs.video.currentTime);
+    },
+    reset() {
+      this.isPlaying = false;
+      this.playbackRate = 1.0;
+      if (this.$refs.video) {
+        this.$refs.video.pause();
+        this.$refs.video.currentTime = 0;
+        this.$refs.video.playbackRate = 1.0;
+      }
     }
   },
   mounted() {
