@@ -52,7 +52,8 @@ async def get_task():
     if not available_tasks:
         raise HTTPException(status_code=404, detail="Нет доступных задач")
 
-    task_filename = available_tasks.pop(random.randrange(len(available_tasks)))
+    task_filename = random.choice(list(available_tasks))
+    available_tasks.remove(task_filename)
     with open(os.path.join("video", task_filename), 'rb') as file:
         content = file.read()
         task_data = json.loads(content.decode('utf-8-sig'))
