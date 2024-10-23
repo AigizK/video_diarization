@@ -1,3 +1,4 @@
 fastapi
 uvicorn
 aider-chat
+python-multipart
