@@ -12,6 +12,7 @@
       :currentTime="currentTime"
       @selectWord="selectWord"
       @assignSpeaker="assignSpeaker"
+      @seekTo="seekToTime"
     ></transcription>
     <speaker-list
         :speakers="speakers"
@@ -94,7 +95,9 @@ export default {
     },
     selectWord(word) {
       this.selectedWord = word;
-      this.$refs.videoPlayer.seekTo(word.start);
+    },
+    seekToTime(time) {
+      this.$refs.videoPlayer.seekTo(time);
     },
     assignSpeaker(speakerId) {
       if (this.selectedWord) {

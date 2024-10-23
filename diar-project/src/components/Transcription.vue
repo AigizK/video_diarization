@@ -49,6 +49,7 @@ export default {
     selectWord(word) {
       this.selectedWord = word;
       this.$emit('selectWord', word);
+      this.$emit('seekTo', word.start);
     },
     assignSpeaker(speakerId) {
       this.$emit('assignSpeaker', speakerId);
