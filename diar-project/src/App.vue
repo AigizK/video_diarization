@@ -20,6 +20,7 @@
         @updateSpeakerName="updateSpeakerName"
       ></speaker-list>
     <hotkeys-info></hotkeys-info>
+    <save-result @save-and-reload="saveAndReload"></save-result>
   </div>
 </template>
 
@@ -28,6 +29,7 @@ import VideoPlayer from './components/VideoPlayer.vue';
 import SpeakerList from './components/SpeakerList.vue';
 import Transcription from './components/Transcription.vue';
 import HotkeysInfo from './components/HotkeysInfo.vue';
+import SaveResult from './components/SaveResult.vue';
 
 export default {
   name: 'App',
@@ -35,29 +37,30 @@ export default {
     VideoPlayer,
     SpeakerList,
     Transcription,
-    HotkeysInfo
+    HotkeysInfo,
+    SaveResult
   },
   data() {
     return {
       videoSrc: '',
       file_id:'file_id',
-      speakers: [
-        { id: 'Speaker_1', name: 'Спикер 1', color: '#FF5733' },
-        { id: 'Speaker_2', name: 'Спикер 2', color: '#33C1FF' }
-      ],
+      speakers: [],
       transcript: [],
       selectedWord: null,
       currentTime: 0,
+      channel:'',
     };
   },
   mounted() {
     // Загрузить расшифровку из JSON-файла
-    fetch('/task')
+    fetch('/api/task')
       .then(response => response.json())
       .then(data => {
         this.transcript = data["text"];
         this.videoSrc = data["video"];
         this.file_id = data["file_id"]
+        this.speakers = data["speakers"]
+        this.channel = data["channel_id"]
       });
 
     // Обработка горячих клавиш
@@ -68,7 +71,7 @@ export default {
       this.$refs.videoPlayer.setPlaybackRate(rate);
     },
     addSpeaker() {
-      if (this.speakers.length < 9) {
+      if (this.speakers.length < 19) {
         const newId = `Speaker_${this.speakers.length + 1}`;
         const newColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
         this.speakers.push({ id: newId, name: newId, color: newColor });
@@ -86,33 +89,32 @@ export default {
       this.$refs.videoPlayer.seekTo(word.start);
     },
     assignSpeaker(speakerId) {
-    if (this.selectedWord) {
-      const originalSpeakerId = this.selectedWord.speakerId || null;
-      let found = false;
-      for (let sentence of this.transcript) {
-        for (let word of sentence.words) {
-          if (word === this.selectedWord) {
-            found = true;
-            word.speakerId = speakerId;
-            continue;
+      if (this.selectedWord) {
+        const originalSpeakerId = this.selectedWord.speakerId;
+        let found = false;
+        
+        for (let sentence of this.transcript) {
+          for (let word of sentence.words) {
+            if (word === this.selectedWord) {
+              found = true;
+              word.speakerId = speakerId;
+              continue;
+            }
+            if (found) {
+              // Если встретили слово с другим спикером или без спикера, прекращаем
+              if (word.speakerId !== originalSpeakerId) {
+                break;
+              }
+              word.speakerId = speakerId;
+            }
           }
           if (found) {
-            if (originalSpeakerId !== null && word.speakerId !== originalSpeakerId) {
-              // Встретили слово с другим спикером, прекращаем изменение
-              break;
-            }
-            word.speakerId = speakerId;
+            break;
           }
         }
-        if (found) {
-          // Если изменение завершено внутри предложения, прекращаем цикл
-          break;
-        }
+        this.selectedWord = null;
       }
-      this.exportResults();
-      this.selectedWord = null; // Сброс выбранного слова
-    }
-  },
+    },
     handleHotkeys(event) {
       if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
         return; // Не обрабатывать горячие клавиши в полях ввода
@@ -136,7 +138,18 @@ export default {
     onVideoTimeUpdate(time) {
       this.currentTime = time;
     },
-    exportResults() {
+    async saveAndReload() {
+      await this.exportResults();
+      // Перезагрузка данных
+      const response = await fetch('/api/task');
+      const data = await response.json();
+      this.transcript = data["text"];
+      this.videoSrc = data["video"];
+      this.file_id = data["file_id"];
+      this.speakers = data["speakers"];
+      this.channel = data["channel_id"];
+    },
+    async exportResults() {
       const result = [];
       for (let sentence of this.transcript) {
         for (let word of sentence.words) {
@@ -146,11 +159,11 @@ export default {
           });
         }
       }
-      // Отправка на сервер
-      fetch('/result', {
+      // Отправка на сервер и ожидание ответа
+      await fetch('/api/result', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({"file_id": this.file_id, "data":result})
+        body: JSON.stringify({"file_id": this.file_id, "data":result,"channel_id": this.channel,"speakers":this.speakers})
       });
     }
   },

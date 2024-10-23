@@ -26,10 +26,11 @@ body {
   border-radius: 5px;
   margin-bottom: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow-y: auto;
 }
 
 .transcription .sentence span {
-  padding: 5px;
+  padding: 1px;
   margin: 2px;
   border-radius: 3px;
   cursor: pointer;

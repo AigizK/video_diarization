@@ -9,6 +9,7 @@ app = FastAPI()
 
 # Убедитесь, что папки results и static/video существуют
 os.makedirs("results", exist_ok=True)
+os.makedirs("speakers", exist_ok=True)
 os.makedirs("static/video", exist_ok=True)
 
 # Монтируем статическую папку
@@ -38,7 +39,7 @@ async def startup_event():
     load_results_files()
 
 
-@app.get("/task")
+@app.get("/api/task")
 async def get_task():
     available_tasks = task_list - results_files
     if not available_tasks:
@@ -48,11 +49,23 @@ async def get_task():
     with open(os.path.join("video", task_filename), 'rb') as file:
         content = file.read()
         task_data = json.loads(content.decode('utf-8-sig'))
+        task_data["file_id"] = task_filename
+
+    channel_id = task_data["channel_id"]
+    if os.path.exists(f"speakers/{channel_id}.json"):
+        with open(f"speakers/{channel_id}.json", 'rb') as file:
+            content = file.read()
+            task_data["speakers"] = json.loads(content.decode('utf-8-sig'))
+    else:
+        task_data["speakers"] = [
+            {"id": 'Speaker_1', "name": 'Спикер 1', "color": '#FF5733'},
+            {"id": 'Speaker_2', "name": 'Спикер 2', "color": '#33C1FF'}
+        ]
 
     return JSONResponse(content=task_data)
 
 
-@app.post("/result")
+@app.post("/api/result")
 async def post_result(data: dict = Body(...)):
     file_id = data.get('file_id')
     if not file_id:
@@ -63,17 +76,25 @@ async def post_result(data: dict = Body(...)):
     with open(filename, "w") as file:
         json.dump(data, file)
 
+    channel_id = data.get('channel_id')
+    speakers = data.get("speakers")
+
+    with open(f"speakers/{channel_id}.json", "w") as file:
+        json.dump(speakers, file)
+
     results_files.add(file_id)
 
     return JSONResponse(
         content={"message": "Данные успешно сохранены", "filename": filename})
 
-@app.get("/video/{filename}")
+
+@app.get("/api/video/{filename}")
 async def get_video(filename: str):
     video_path = f"video/{filename}"
     if os.path.isfile(video_path):
         return FileResponse(video_path)
     raise HTTPException(status_code=404, detail="Видео не найдено")
+
 
 if __name__ == "__main__":
     import uvicorn

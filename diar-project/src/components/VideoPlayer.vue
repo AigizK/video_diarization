@@ -65,13 +65,24 @@ export default {
     onTimeUpdate() {
       this.$emit('timeupdate', this.$refs.video.currentTime);
     }
+  },
+  mounted() {
+    // Add event listeners to sync playing state
+    this.$refs.video.addEventListener('play', () => {
+      this.isPlaying = true;
+    });
+    this.$refs.video.addEventListener('pause', () => {
+      this.isPlaying = false;
+    });
   }
 };
 </script>
 
 <style>
 .video-player {
-  width: 60%;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
 }
 video {
   width: 100%;

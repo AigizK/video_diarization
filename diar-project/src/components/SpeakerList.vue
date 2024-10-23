@@ -20,7 +20,7 @@
         </tr>
       </tbody>
     </table>
-    <button @click="addSpeaker" :disabled="speakers.length >= 9">Добавить спикера</button>
+    <button @click="addSpeaker" :disabled="speakers.length >= 19">Добавить спикера</button>
   </div>
 </template>
 

@@ -1,18 +1,20 @@
 <template>
   <div class="transcription">
-    <div v-for="(sentence, index) in transcript" :key="index" class="sentence">
-      <span
-        v-for="(word, idx) in sentence.words"
-        :key="idx"
-        :class="{
-          'current-word': isCurrentWord(word),
-          'selected-word': word === selectedWord,
-        }"
-        :style="{ backgroundColor: getSpeakerColor(word.speakerId) }"
-        @click="selectWord(word)"
-      >
-        {{ word.word }}
-      </span>
+    <div class="sentences-container">
+      <div v-for="(sentence, index) in transcript" :key="index" class="sentence">
+        <span
+          v-for="(word, idx) in sentence.words"
+          :key="idx"
+          :class="{
+            'current-word': isCurrentWord(word),
+            'selected-word': word === selectedWord,
+          }"
+          :style="{ backgroundColor: getSpeakerColor(word.speakerId) }"
+          @click="selectWord(word)"
+        >
+          {{ word.word }}
+        </span>
+      </div>
     </div>
     <div v-if="selectedWord" class="speaker-buttons">
       <button
@@ -66,9 +68,19 @@ export default {
 <style>
 .transcription {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.sentences-container {
+  height: 100px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
 }
 .sentence {
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 .sentence span {
   margin-right: 5px;
@@ -78,6 +90,9 @@ export default {
   font-weight: bold;
 }
 .speaker-buttons {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
   margin-top: 10px;
 }
 .speaker-buttons button {

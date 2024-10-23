@@ -1,0 +1,6 @@
+.aider*
+.env
+.envrc
+**/.DS_Store
+**/.idea/**
+**/video/**
