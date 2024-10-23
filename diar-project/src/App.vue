@@ -54,13 +54,21 @@ export default {
   mounted() {
     // Загрузить расшифровку из JSON-файла
     fetch('/api/task')
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 404) {
+          alert('Задачи закончились');
+          return;
+        }
+        return response.json();
+      })
       .then(data => {
-        this.transcript = data["text"];
-        this.videoSrc = data["video"];
-        this.file_id = data["file_id"]
-        this.speakers = data["speakers"]
-        this.channel = data["channel_id"]
+        if (data) {
+          this.transcript = data["text"];
+          this.videoSrc = data["video"];
+          this.file_id = data["file_id"]
+          this.speakers = data["speakers"]
+          this.channel = data["channel_id"]
+        }
       });
 
     // Обработка горячих клавиш
@@ -142,6 +150,10 @@ export default {
       await this.exportResults();
       // Перезагрузка данных
       const response = await fetch('/api/task');
+      if (response.status === 404) {
+        alert('Задачи закончились');
+        return;
+      }
       const data = await response.json();
       this.transcript = data["text"];
       this.videoSrc = data["video"];
