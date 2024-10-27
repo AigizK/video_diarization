@@ -80,7 +80,7 @@ export default {
       this.$refs.videoPlayer.setPlaybackRate(rate);
     },
     addSpeaker() {
-      if (this.speakers.length < 19) {
+      if (this.speakers.length < 50) {
         const newId = `Speaker_${this.speakers.length + 1}`;
         const newColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
         this.speakers.push({ id: newId, name: newId, color: newColor });
